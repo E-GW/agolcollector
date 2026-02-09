@@ -1,43 +1,104 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- character type and browser page size adjuster -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-        
-        <title>Data Collector for AGOL</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
 
-        <style>
-            html,
-            body,
-            #viewDiv {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            width: 100%;
+    <title>Data Collector for AGOL</title>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      /* Search widget styling */
+      .esri-search__container {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+    </style>
+
+    <!-- ArcGIS JS API -->
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.33/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.33/"></script>
+
+    <script>
+      require(
+        [
+          "esri/config",
+          "esri/Map",
+          "esri/views/MapView",
+          "esri/widgets/Locate",
+          "esri/widgets/Search",
+          "esri/layers/FeatureLayer"
+        ],
+        (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
+          esriConfig.apiKey =
+            "AAPTxy8BH1VEsoebNVZXo8HurBJmF1dHA4CHzUZ4f7XXY9MumVDFdZwWOV0pYRQMOAc7ZaqvOZxcqTmdHYg4uq0LAzk5EA8UDp0afz4N38c05_g1e4nZkAsxtdl9eWtAkFEOzYhK5sSy0SSdy9kSZ2kK797kJHpMrR-d0v7pjLT7kO2zAR9lbfIj2YY8PY1C_ARAz5SGHU8AQF_B146E-iEsWLrzafOtmDmUKhSkdT9BEWgLhqy6WzEsPYTj7B_66V6MAT1_eplYvQF3";
+
+          const map = new Map({
+            basemap: "satellite"
+          });
+
+          const view = new MapView({
+            container: "viewDiv",
+            map: map,
+
+            // Center over Illinois
+            center: [-87.9615448, 41.733751],
+            zoom: 9,
+
+            // Zoom limits
+            constraints: {
+              minZoom: 5,
+              maxZoom: 13
             }
-        </style>
-        
-        <!-- for Esri.js -->
-        <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
-        <script src="https://js.arcgis.com/4.33/"></script>
+          });
 
-        <script>
-            require([ "esri/config", "esri/Map", "esri/views/MapView" ], (esriConfig, Map, MapView) => {
-                
-                esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurBJmF1dHA4CHzUZ4f7XXY9MumVDFdZwWOV0pYRQMOAc7ZaqvOZxcqTmdHYg4uq0LAzk5EA8UDp0afz4N38c05_g1e4nZkAsxtdl9eWtAkFEOzYhK5sSy0SSdy9kSZ2kK797kJHpMrR-d0v7pjLT7kO2zAR9lbfIj2YY8PY1C_ARAz5SGHU8AQF_B146E-iEsWLrzafOtmDmUKhSkdT9BEWgLhqy6WzEsPYTj7B_66V6MAT1_eplYvQF3";
-                
-                const map = new Map({
-                    basemap: "satellite"
-                });
-                const view = new MapView({
-                    container: "viewDiv", // Reference to the DOM node that will contain the view
-                    map: map // References the map object
-                });
-            });
-            </script>
-    </head>
-    <body>
-        <div id="viewDiv"></div>
-    </body>
+          // Locate widget
+          const locateBtn = new Locate({
+            view: view
+          });
+
+          view.ui.add(locateBtn, {
+            position: "top-left"
+          });
+
+          // Search (address search bar)
+          const searchWidget = new Search({
+            view: view,
+            allPlaceholder: "Search address or place",
+            includeDefaultSources: true
+          });
+
+          // Create featurelayer from feature service 
+          const layer = new FeatureLayer({ 
+            // URL to the service 
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_b46862e2d7a14465acf3654e20265a29_results/FeatureServer"//Your item URL Goes Here
+          });
+
+          map.add(layer);
+
+          view.ui.add(searchWidget, {
+            position: "top-right"
+          });
+        }
+      );
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
 </html>
