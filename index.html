@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Character encoding -->
     <meta charset="utf-8" />
+
+    <!-- Responsive behavior for mobile and desktop -->
     <meta
       name="viewport"
       content="initial-scale=1, maximum-scale=1, user-scalable=no"
     />
 
+    <!-- Page title -->
     <title>Data Collector for AGOL</title>
 
     <style>
+      /* Ensure the map fills the entire browser window */
       html,
       body,
       #viewDiv {
@@ -19,12 +24,13 @@
         width: 100%;
       }
 
-      /* Search widget styling */
+      /* Customize the appearance of the ArcGIS Search widget */
       .esri-search__container {
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       }
 
+      /* Style for the "Add Record" button overlay */
       .addRecordBtn {
         position: absolute;
         z-index: 10;
@@ -38,21 +44,25 @@
         font-size: 14px;
         cursor: pointer;
         text-decoration: none;
-       }
+      }
 
-       .addRecordBtn:hover {
-         background-color: #005a87;
-       }
+      /* Hover effect for the "Add Record" button */
+      .addRecordBtn:hover {
+        background-color: #005a87;
+      }
     </style>
 
-    <!-- ArcGIS JS API -->
+    <!-- ArcGIS JavaScript API stylesheet -->
     <link
       rel="stylesheet"
       href="https://js.arcgis.com/4.33/esri/themes/light/main.css"
     />
+
+    <!-- ArcGIS JavaScript API -->
     <script src="https://js.arcgis.com/4.33/"></script>
 
     <script>
+      // Load required ArcGIS modules
       require(
         [
           "esri/config",
@@ -62,53 +72,67 @@
           "esri/widgets/Search",
           "esri/layers/FeatureLayer"
         ],
-        (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
+        (
+          esriConfig,
+          Map,
+          MapView,
+          Locate,
+          Search,
+          FeatureLayer
+        ) => {
+
+          // Set the ArcGIS API key
           esriConfig.apiKey =
             "AAPTxy8BH1VEsoebNVZXo8HurBJmF1dHA4CHzUZ4f7XXY9MumVDFdZwWOV0pYRQMOAc7ZaqvOZxcqTmdHYg4uq0LAzk5EA8UDp0afz4N38c05_g1e4nZkAsxtdl9eWtAkFEOzYhK5sSy0SSdy9kSZ2kK797kJHpMrR-d0v7pjLT7kO2zAR9lbfIj2YY8PY1C_ARAz5SGHU8AQF_B146E-iEsWLrzafOtmDmUKhSkdT9BEWgLhqy6WzEsPYTj7B_66V6MAT1_eplYvQF3";
 
+          // Create the map with a satellite basemap
           const map = new Map({
             basemap: "satellite"
           });
 
+          // Create the map view
           const view = new MapView({
             container: "viewDiv",
             map: map,
 
-            // Center over Illinois
+            // Initial map center (Illinois)
             center: [-87.9615448, 41.733751],
             zoom: 9,
 
-            // Zoom limits
+            // Restrict zoom levels
             constraints: {
               minZoom: 5,
               maxZoom: 13
             }
           });
 
-          // Locate widget
+          // Create a Locate widget to find the user's location
           const locateBtn = new Locate({
             view: view
           });
 
+          // Add the Locate widget to the top-left of the map
           view.ui.add(locateBtn, {
             position: "top-left"
           });
 
-          // Search (address search bar)
+          // Create a Search widget for address and place searches
           const searchWidget = new Search({
             view: view,
             allPlaceholder: "Search address or place",
             includeDefaultSources: true
           });
 
-          // Create featurelayer from feature service 
-          const layer = new FeatureLayer({ 
-            // URL to the service 
-            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_b46862e2d7a14465acf3654e20265a29_results/FeatureServer"//Your item URL Goes Here
+          // Create a FeatureLayer from a Survey123 feature service
+          const layer = new FeatureLayer({
+            // URL to the feature service
+            url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_b46862e2d7a14465acf3654e20265a29_results/FeatureServer"
           });
 
+          // Add the feature layer to the map
           map.add(layer);
 
+          // Add the Search widget to the bottom-right of the map
           view.ui.add(searchWidget, {
             position: "bottom-right"
           });
@@ -118,7 +142,16 @@
   </head>
 
   <body>
-    <a href="https://survey123.arcgis.com/share/55a1dcb95cfe435a8b16cebfd83afef4"target="_blank" class="addRecordBtn">Add Record</a>
+    <!-- Button linking to Survey123 form for adding a new record -->
+    <a
+      href="https://survey123.arcgis.com/share/55a1dcb95cfe435a8b16cebfd83afef4"
+      target="_blank"
+      class="addRecordBtn"
+    >
+      Add Record
+    </a>
+
+    <!-- Container for the ArcGIS MapView -->
     <div id="viewDiv"></div>
   </body>
 </html>
